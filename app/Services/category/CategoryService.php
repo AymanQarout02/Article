@@ -2,13 +2,14 @@
 
 namespace App\Services\category;
 use App\Models\Category;
+use Illuminate\Http\Request;
 
 class CategoryService
 {
 
     public function getAllCategories()
     {
-        return Category::all()->orderByDesc('created_at')->paginate(9);
+        return Category::all();
     }
 
     public function getCategoryById($categoryId)
@@ -42,6 +43,12 @@ class CategoryService
             $category->delete();
             return true;
         }
+    }
+
+    public function getArticlesByCategoryId($categoryId)
+    {
+        $category = $this->getCategoryById($categoryId);
+        return $category->articles()->orderByDesc('created_at')->paginate(9);
     }
 
 }

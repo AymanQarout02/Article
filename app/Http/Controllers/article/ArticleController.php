@@ -4,7 +4,7 @@ namespace App\Http\Controllers\article;
 
 use App\Http\Controllers\Controller;
 use App\Models\Article;
-use Illuminate\Support\Facades\Request;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\View;
 use App\Services\article\ArticleService;
 
@@ -18,16 +18,19 @@ class ArticleController extends Controller
 
     public function index(){
         $articles = $this->articleService->getAllArticles();
+
         return view('article.index', compact('articles'));
     }
 
     public function show($articleId){
         $article = $this->articleService->getArticleById($articleId);
+
         return view('article.show', compact('article'));
     }
 
     public function create() {
-        return view('article.create');
+        $categories = $this->articleService->getAllCategories();
+        return view('article.create',compact('categories'));
     }
 
     public function store(Request $request){

@@ -4,7 +4,7 @@ namespace App\Http\Controllers\category;
 use App\Http\Controllers\Controller;
 
 use App\Models\Category;
-use Illuminate\Support\Facades\Request;
+use Illuminate\Http\Request;
 use App\Services\Category\CategoryService;
 
 class CategoryController extends Controller
@@ -23,8 +23,10 @@ class CategoryController extends Controller
 
     public function show($categoryId)
     {
-
+        $articles = $this->categoryService->getArticlesByCategoryId($categoryId);
+        return view('category.show', compact('articles'));
     }
+
     public function create()
     {
         return view('category.create');

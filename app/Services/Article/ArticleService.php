@@ -2,6 +2,7 @@
 
 namespace App\Services\Article;
 use App\Models\Article;
+use App\Models\Category;
 use App\Models\Image;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Storage;
@@ -11,10 +12,10 @@ class ArticleService
 {
 
     public function getAllArticles(){
-
-
-        return Article::all()->orderByDesc('created_at')->paginate(9);
-
+        return Article::all();
+    }
+    public function getAllCategories(){
+        return Category::all();
     }
 
     public function getArticleById($articleId){
@@ -29,6 +30,14 @@ class ArticleService
             'created_by' => auth()->id(),
         ]);
 
+        if (isset($data['category_id'])) {
+            $article->categories()->sync($data['category_id']);
+        } else {
+            $article->categories()->sync([]);
+        }
+
+
+
         if (isset($data['image'])) {
             $article->image_id = $this->saveImage($data);
         }else{
@@ -36,6 +45,8 @@ class ArticleService
         }
 
         $article->save();
+
+
 
     }
 
