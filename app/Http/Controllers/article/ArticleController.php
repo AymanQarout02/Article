@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\article;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Article\ArticleCreateRequest;
+use App\Http\Requests\Article\ArticleUpdateRequest;
 use App\Models\Article;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\View;
@@ -18,13 +20,12 @@ class ArticleController extends Controller
 
     public function index(){
         $articles = $this->articleService->getAllArticles();
-
-        return view('article.index', compact('articles'));
+        $categories = $this->articleService->getAllCategories();
+        return view('article.index', compact(['articles','categories']));
     }
 
     public function show($articleId){
         $article = $this->articleService->getArticleById($articleId);
-
         return view('article.show', compact('article'));
     }
 
@@ -33,25 +34,27 @@ class ArticleController extends Controller
         return view('article.create',compact('categories'));
     }
 
-    public function store(Request $request){
-       $this->articleService->storeArticle($request->all());
-       return redirect()->route('article.index')->with('success', 'Article created successfully.');
+    public function store(ArticleCreateRequest $request){
+       $this->articleService->storeArticle($request, $request->validated());
+       return redirect()->route('user.show' ,auth()->id())->with('success', 'Article created successfully.');
     }
 
-    public function edit($articleId){
-        $article = $this->articleService->getArticleById($articleId);
-        return view('article.edit', compact('article'));
+    public function edit(Article $article){
+        $selectedCategory = $article->categories->pluck('id')->toArray();
+        $categories = $this->articleService->getAllCategories();
+        return view('article.edit', compact(['article', 'categories','selectedCategory']));
     }
 
-    public function update(Article $article, Request $request){
-        $this->articleService->updateArticle($article,$request->all());
-        return redirect()->route('article.index')->with('success', 'Article updated successfully.');
+    public function update(Article $article, ArticleUpdateRequest $request){
+
+        $data = $request->validated();
+        $this->articleService->updateArticle($request, $article,$data);
+        return redirect()->route('user.show',auth()->id())->with('success', 'Article updated successfully.');
 
     }
-
-    public function destroy($ArticleId){
-        $this->articleService->deleteArticle($ArticleId);
-        return redirect()->route('article.index')->with('success', 'Article deleted successfully.');
+    public function destroy(Article $article){
+        $this->articleService->deleteArticle($article);
+        return redirect()->route('user.show' , Auth()->id())->with('success', 'Article deleted successfully.');
     }
 
 

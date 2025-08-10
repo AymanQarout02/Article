@@ -10,6 +10,7 @@ use App\Services\Category\CategoryService;
 class CategoryController extends Controller
 {
     public CategoryService $categoryService;
+
     public function __construct(CategoryService $categoryService)
     {
         $this->categoryService = $categoryService;
@@ -21,10 +22,10 @@ class CategoryController extends Controller
         return view('category.index', compact('categories'));
     }
 
-    public function show($categoryId)
+    public function show(Category $category)
     {
-        $articles = $this->categoryService->getArticlesByCategoryId($categoryId);
-        return view('category.show', compact('articles'));
+        $articles = $this->categoryService->getArticlesByCategoryId($category);
+        return view('category.show', compact('articles', 'category'));
     }
 
     public function create()
@@ -35,12 +36,11 @@ class CategoryController extends Controller
     public function store(Request $request)
     {
         $this->categoryService->storeCategory($request->all());
-        return redirect()->route('category.index')->with('success', 'Category created successfully.');
+        return redirect()->route('user.categories',auth()->id())->with('success', 'Category created successfully.');
     }
 
-    public function edit($categoryId)
+    public function edit(Category $category)
     {
-        $category = $this->categoryService->getCategoryById($categoryId);
         return view('category.edit', compact('category'));
     }
 
@@ -50,8 +50,13 @@ class CategoryController extends Controller
         return redirect()->route('category.index')->with('success', 'Category updated successfully.');
     }
 
-    public function destroy($CategoryId)
+    public function destroy(Category $category)
     {
-        $this->categoryService->deleteCategory($CategoryId);
-        return redirect()->route('category.index')->with('success', 'Category deleted successfully.');
-    }}
+        $flag = $this->categoryService->deleteCategory($category);
+
+        if ($flag)
+            return redirect()->route('user.categories' , auth()->id())->with('success', 'Category deleted successfully.');
+        else
+            return redirect()->route('user.categories',auth()->id())->with('error', 'Category cannot be deleted as it has associated articles.');
+    }
+}

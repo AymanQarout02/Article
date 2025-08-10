@@ -9,7 +9,8 @@ class CategoryService
 
     public function getAllCategories()
     {
-        return Category::all();
+        return Category::orderBy('created_at', 'desc')
+            ->paginate(3);
     }
 
     public function getCategoryById($categoryId)
@@ -29,25 +30,24 @@ class CategoryService
     {
         $category->update([
             'name' => $data['name'],
-            'description' => $data['description'],
+            'updated_by' => auth()->id(),
+            'updated_at' => now(),
         ]);
     }
 
-    public function deleteCategory($categoryId) : bool
+    public function deleteCategory($category) : bool
     {
-        $category = $this->getCategoryById($categoryId);
-
         if($category->articles()->count() > 0) {
             return false;
         }else{
+            $category->deleted_by = auth()->id();
+            $category->save();
             $category->delete();
             return true;
         }
     }
-
-    public function getArticlesByCategoryId($categoryId)
+    public function getArticlesByCategoryId(Category $category)
     {
-        $category = $this->getCategoryById($categoryId);
         return $category->articles()->orderByDesc('created_at')->paginate(9);
     }
 

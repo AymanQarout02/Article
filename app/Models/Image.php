@@ -28,7 +28,7 @@ class Image extends BaseModel
        return $this->hasOne(User::class, 'deleted_by');
 
    }
-   public function articles(){
-       return $this->belongsTo(Article::class, 'image_id');
+   public function article(){
+       return $this->hasOne(Article::class, 'image_id');
    }
 }

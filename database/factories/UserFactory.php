@@ -29,12 +29,25 @@ class UserFactory extends Factory
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
+            'role' => 'viewer',
         ];
     }
 
-    /**
-     * Indicate that the model's email address should be unverified.
-     */
+
+    public function admin(): static
+    {
+        return $this->state(fn () => ['role' => 'admin']);
+    }
+    public function publisher(): static
+    {
+        return $this->state(fn () => ['role' => 'publisher']);
+    }
+    public function viewer(): static
+    {
+        return $this->state(fn () => ['role' => 'viewer']);
+    }
+
+
     public function unverified(): static
     {
         return $this->state(fn (array $attributes) => [

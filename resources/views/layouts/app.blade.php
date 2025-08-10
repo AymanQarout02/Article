@@ -18,7 +18,6 @@
         <div class="min-h-screen bg-gray-100">
             @include('layouts.navigation')
 
-            <!-- Page Heading -->
             @isset($header)
                 <header class="bg-white shadow">
                     <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
@@ -27,10 +26,17 @@
                 </header>
             @endisset
 
-            <!-- Page Content -->
-            <main>
-                {{ $slot }}
-            </main>
+            <div class="flex">
+                @if('article.index' !== request()->route()->getName() &&
+                    'category.index' !== request()->route()->getName() &&
+                    'article.show' !== request()->route()->getName() &&
+                    'category.show' !== request()->route()->getName())
+                    @include('layouts.sidebar')
+                @endif
+                <main class="flex-1 p-4">
+                    {{ $slot }}
+                </main>
+            </div>
         </div>
     </body>
 </html>

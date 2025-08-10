@@ -11,7 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::dropIfExists('article_category');
+        Schema::table('users', function (Blueprint $table) {
+            $table->foreignId('deleted_by')->nullable()->constrained('users');
+        });
     }
 
     /**
@@ -19,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
+        Schema::table('users', function (Blueprint $table) {
+            //
+        });
     }
 };

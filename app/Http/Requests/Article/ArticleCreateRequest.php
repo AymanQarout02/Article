@@ -1,0 +1,18 @@
+<?php
+namespace App\Http\Requests\Article;
+
+use Illuminate\Foundation\Http\FormRequest;
+
+class ArticleCreateRequest extends FormRequest
+{
+    public function rules(): array
+    {
+        return [
+            'name' => 'required|string|max:255|unique:articles,name',
+            'body' => 'required|string',
+            'image' => 'nullable|image|max:2048|mimes:jpeg,jpg,png',
+            'categories' => 'required|array',
+            'categories.*' => 'exists:categories,id',
+        ];
+    }
+}

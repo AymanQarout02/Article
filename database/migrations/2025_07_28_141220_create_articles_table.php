@@ -14,11 +14,11 @@ return new class extends Migration
         Schema::create('articles', function (Blueprint $table) {
             $table->id();
             $table->string('name')->unique();
-            $table->string('body');
+            $table->mediumText('body');
             $table->foreignId('created_by')->constrained('users')->onDelete('cascade');
             $table->foreignId('updated_by')->nullable()->constrained('users');
             $table->foreignId('deleted_by')->nullable()->constrained('users');
-            $table->foreignId('image_id')->nullable()->constrained('images');
+            $table->foreignId('image_id')->nullable()->constrained();
             $table->timestamps();
             $table->softDeletes();
         });

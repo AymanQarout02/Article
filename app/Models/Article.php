@@ -17,9 +17,8 @@ class Article extends BaseModel{
 
     public function image()
     {
-        return $this->hasOne(Image::class, 'image_id');
+        return $this->belongsTo(Image::class, 'image_id');
     }
-
     public function categories()
     {
         return $this->belongsToMany(Category::class);
